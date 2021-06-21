@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 X-linked dystonia-parkinsonism (XDP) is a combined dystonia-parkinsonism syndrome, modified by a (CCCTCT)n repeat within the causal SINE-VNTR-Alu (SVA) retrotransposon insertion in the TAF1 gene. This GitHub repository provides bash scripts to estimate the hexanucleotide repeat length from long-read nanopore sequencing data of patients with XDP. Therefore, the software tools NCRF or STRique can be used.
 
 1. Installation
@@ -52,4 +51,4 @@ To execute the STRique script, the three input parameters has to be provided ana
   
 For example: sbatch xdp_bookchapter/STRique/STRIQUE.sh /data/patient_1234.zip CRISPR XDP_1234
 
->>>>>>> 30a3c7dc861f3e021856a8bd8c728f76bba8cb51
+
