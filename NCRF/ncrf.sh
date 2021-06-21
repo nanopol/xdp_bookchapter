@@ -14,8 +14,6 @@
 #SBATCH --tmp=100G
 #  Notify me at job start and end:
 #SBATCH --mail-type=ALL
-#  Send the notifications to:
-#SBATCH --mail-user=theresa.lueth@gmx.de
 #  Find your job easier with a name:
 #SBATCH --job-name=NCRF_SVA
 
@@ -24,6 +22,7 @@ source /etc/profile.d/modules.sh
 # Allow aliases (required by some modules):
 shopt -s expand_aliases
 # Load your necessary modules:
+module load singularity-sylabs/v3.5.3
 module load ncrf/v1.01.02
 module load minimap2
 module load samtools
@@ -40,9 +39,11 @@ mkdir $CONFIG
 #Copy sequencing data and reference file to input:
 cp -a $HOME/xdp_bookchapter/SVA_$2.fa $INPUT
 unzip $1 -d  $INPUT
+cp -a $INPUT/*/*.fastq $INPUT
+cp -a $INPUT/*/*.fast5 $INPUT
 
 #Prepare a BAM file containing only reads with >1kb alignment length:
-cat $INPUT/*.fastq > $INPUT/$1.fastq
+cat $INPUT/*.fastq > $INPUT/$3.fastq
 minimap2 -a -x map-ont $INPUT/SVA_$2.fa $INPUT/$3.fastq > $INPUT/$3.sam
 samtools view -S -b $INPUT/$3.sam > $INPUT/$3.bam
 samtools sort $INPUT/$3.bam -o $INPUT/$3.sorted.bam
@@ -60,24 +61,16 @@ cp -a $INPUT/aligned_length_filt_$3.sorted.bam.bai $CONFIG
 samtools fastq $INPUT/aligned_length_filt_$3.sorted.bam > $INPUT/aligned_length_filt_$3.fastq
 cat $INPUT/aligned_length_filt_$3.fastq | paste - - - - | cut -f 1,2 | sed 's/^@/>/' | tr "\t" "\n" > $INPUT/aligned_length_filt_$3.fasta
 
-
+cp -a $INPUT/aligned_length_filt_$3.fasta $CONFIG
 #Do NCRF analysis on FASTA file with set max. noise and min. length parameters:
 cat $INPUT/aligned_length_filt_$3.fasta \
-| NCRF $MOTIF --stats=events --positionalevents --maxnoise=20%  --minlength=108 \
-| ncrf_sort.py --sortby=mratio  \
+| singularity exec $NCRF_CONTAINER NCRF $MOTIF --stats=events --positionalevents --maxnoise=20%  --minlength=108 \
+| singularity exec $NCRF_CONTAINER ncrf_sort.py --sortby=mratio  \
 | tee $CONFIG/"${IDENTIFIER}_${MOTIF}_raw.summary" \
-| ncrf_consensus_filter.py \
-| ncrf_sort.py --sortby=mratio  \
+| singularity exec $NCRF_CONTAINER ncrf_consensus_filter.py \
+| singularity exec $NCRF_CONTAINER ncrf_sort.py --sortby=mratio  \
 | tee $CONFIG/"${IDENTIFIER}_${MOTIF}_refined.summary" \
-| ncrf_summary.py \
+| singularity exec $NCRF_CONTAINER ncrf_summary.py \
 > $CONFIG/"${IDENTIFIER}_${MOTIF}_summary.summary"
 
 echo "--->NCRF analysis is finished"
-
-
-
-
-
-
-
-

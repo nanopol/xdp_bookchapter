@@ -14,8 +14,6 @@
 #SBATCH --tmp=100G
 #  Notify me at job start and end:
 #SBATCH --mail-type=ALL
-#  Send the notifications to:
-#SBATCH --mail-user=Theresa.lueth@gmx.de
 #  Find your job easier with a name:
 #SBATCH --job-name=STRique_SVA
 
@@ -43,6 +41,8 @@ mkdir $FAST5
 
 #Copy sequencing data and reference file to input:
 unzip $SEQ_DATA -d  $INPUT
+cp -a $INPUT/*/*.fastq $INPUT
+cp -a $INPUT/*/*.fast5 $INPUT
 cp -a $INPUT/*.fastq $SVA
 cp -a $HOME/xdp_bookchapter/SVA_$2.fa $SVA
 
@@ -66,5 +66,5 @@ samtools index $INPUT/SVA_lenfilt.sorted.bam
 
 #Run STRique on aligned reads:
 samtools view $INPUT/SVA_lenfilt.sorted.bam | python $STRIQUE/scripts/STRique.py count $INPUT/SVA_reads.fofn \
-$STRIQUE/models/r9_4_450bps.model $INPUT/config_SVA_$2.tsv > $HOME/XDP_$3_$1.tsv
+$STRIQUE/models/r9_4_450bps.model $INPUT/config_SVA_$2.tsv > $HOME/XDP_$3_$2.tsv
 
