@@ -15,9 +15,9 @@
 #  Notify me at job start and end:
 #SBATCH --mail-type=ALL
 #  Send the notifications to:
-#SBATCH --mail-user=
+#SBATCH --mail-user=Theresa.lueth@gmx.de
 #  Find your job easier with a name:
-#SBATCH --job-name=NCRF_SVA
+#SBATCH --job-name=STRique_SVA
 
 #Initialize the module system:
 source /etc/profile.d/modules.sh
@@ -28,13 +28,12 @@ module load strique/0.4.2
 module load minimap2
 
 #Define the home directory and path to sequencing data, your config file and input folders: 
-HOME_DIR=/home/yourname
-CONFIG=$HOME_DIR/config_SVA_$2.tsv
+CONFIG=$HOME/xdp_bookchapter/STRique/config_SVA_$2.tsv
 INPUT=$SCRATCH/inputdata
 SVA=$SCRATCH/SVA
 RESULTS=$SCRATCH/results
 FAST5=$SCRATCH/fast5_files
-SEQ_DATA=/data/youdatafolder
+SEQ_DATA=$1
 
 mkdir $INPUT
 mkdir $SVA
@@ -43,12 +42,12 @@ mkdir $FAST5
 
 
 #Copy sequencing data and reference file to input:
-unzip $SEQ_DATA/$1.zip -d  $INPUT
+unzip $SEQ_DATA -d  $INPUT
 cp -a $INPUT/*.fastq $SVA
-cp -a $HOME_DIR/SVA_$2.fa $SVA
+cp -a $HOME/xdp_bookchapter/SVA_$2.fa $SVA
 
 #Make file of file names with STRiqe:
-cp -a $HOME_DIR/SVA_$2.fa $INPUT
+cp -a $HOME/xdp_bookchapter/SVA_$2.fa $INPUT
 python $STRIQUE/scripts/STRique.py index $INPUT > $INPUT/SVA_reads.fofn
 cp -a $CONFIG $INPUT
 
@@ -67,5 +66,5 @@ samtools index $INPUT/SVA_lenfilt.sorted.bam
 
 #Run STRique on aligned reads:
 samtools view $INPUT/SVA_lenfilt.sorted.bam | python $STRIQUE/scripts/STRique.py count $INPUT/SVA_reads.fofn \
-$STRIQUE/models/r9_4_450bps.model $INPUT/config_SVA_$2.tsv > $HOME_DIR/XDP_$2_$1.tsv
+$STRIQUE/models/r9_4_450bps.model $INPUT/config_SVA_$2.tsv > $HOME/XDP_$3_$1.tsv
 
