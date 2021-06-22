@@ -8,7 +8,7 @@ git clone https://github.com/nanopol/xdp_bookchapter.git
 
 NCRF:
 
-sbatch xdp_bookchapter/NCRF/ncrf.sh </path/to/sequencing/data/in_zip_format.zip> <PCR/CRISPR> <Identifier>
+sbatch xdp_bookchapter/NCRF/ncrf.sh </path/to/sequencing/data/in_zip_format.zip> <PCR/CRISPR> \<Identifier>
 
 To execute the NCRF script, three input parameters are required i.e.,: the path to the zip folder containing the FASTQ and FAST5 files, the method you have used to enrich the target (PCR or CRISPR) and the identifier for the resulting output folder.
 
@@ -17,7 +17,7 @@ For example: sbatch xdp_bookchapter/NCRF/ncrf.sh /data/patient_1234.zip CRISPR X
 
 STRique: 
 
-sbatch xdp_bookchapter/STRique/STRIQUE.sh </path/to/sequencing/data/in_zip_format.zip> <PCR/CRISPR> <Identifier>
+sbatch xdp_bookchapter/STRique/STRIQUE.sh </path/to/sequencing/data/in_zip_format.zip> <PCR/CRISPR> \<Identifier>
 
 To execute the STRique script, the three input parameters has to be provided analogous to NCRF.
 
